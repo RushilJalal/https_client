@@ -13,14 +13,14 @@ void main()
         htonl(0x08080808) // google dns - 8.8.8.8 - convert from host byte to network byte order
     };
 
-    connect(sockfd, &addr, sizeof(addr)); // open a connection on socket fd
+    connect(sockfd, (struct sockaddr *)&addr, sizeof(addr)); // open a connection on socket fd
 
     SSL_CTX *ctx = SSL_CTX_new(TLS_method()); // ssl context object
     SSL *ssl = SSL_new(ctx);                  // ssl object
     SSL_set_fd(ssl, sockfd);                  // connect ssl object to fd
     SSL_connect(ssl);                         // init tls connection using handshake
 
-    char *req = "GET /\r\n\r\n";
+    char *req = "GET / HTTP/1.1\r\nHost: 8.8.8.8\r\n\r\n";
     SSL_write(ssl, req, strlen(req)); // write 'num' bytes to TLS/SSL connection
 
     char buffer[1024] = {0};
